@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "async": "^2.6.1",
+    "chalk": "^2.4.1",
+    "request": "^2.88.0"
+  }
+}
