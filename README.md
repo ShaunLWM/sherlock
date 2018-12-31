@@ -4,7 +4,7 @@
 > A NodeJS port of [Sherlock](https://github.com/sdushantha/sherlock)
 
 <p align="center">
-<img src="preview.png">
+<img src="https://raw.githubusercontent.com/ShaunLWM/sherlock/master/preview.PNG">
 </a>
 </p>
 
