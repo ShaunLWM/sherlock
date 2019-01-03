@@ -14,7 +14,7 @@ const cli = meow(`
         --file, -f  parse username from file (each name on a newline)
         --username, -u sherlock a single username
         --parallel, -p number of concurrent sites to check (default: 5)
-        --ignore, -i add social networks to ignore [comma-delimited, lowercase] (eg: 9gag,instagram)
+        --exclude, -e add social networks to ignore [comma-delimited, lowercase] (eg: 9gag,instagram)
 
     Examples
         $ node index.js --username natgeo
@@ -36,9 +36,9 @@ const cli = meow(`
                 type: 'integer',
                 alias: 'p'
             },
-            ignore: {
+            exclude: {
                 type: 'string',
-                alias: 'i'
+                alias: 'e'
             }
         }
     });
@@ -72,16 +72,16 @@ if (usernames.length < 1) {
 }
 
 let ignored = [];
-if (typeof cli['flags']['i'] !== 'undefined') {
-    if (!cli['flags']['i'].includes(',')) {
-        ignored = [cli['flags']['i'].trim().toLowerCase()];
+if (typeof cli['flags']['e'] !== 'undefined') {
+    if (!cli['flags']['e'].includes(',')) {
+        ignored = [cli['flags']['e'].trim().toLowerCase()];
     } else {
-        ignored = cli['flags']['i'].split(',').map(i => {
+        ignored = cli['flags']['e'].split(',').map(i => {
             return i.toLowerCase().trim();
         });
     }
 
-    console.log(`[${chalk.green('@')}] ${chalk.green(`Ignoring`)}: ${chalk.red(ignored)}`);
+    console.log(`[${chalk.green('@')}] ${chalk.green(`Exclude`)}: ${chalk.red(ignored)}`);
 }
 
 fs.readdirSync('./lib/plugins/').forEach(file => {
