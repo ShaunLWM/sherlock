@@ -15,6 +15,7 @@ const cli = meow(`
         --username, -u sherlock a single username
         --parallel, -p number of concurrent sites to check (default: 5)
         --exclude, -e add social networks to ignore [comma-delimited, lowercase] (eg: 9gag,instagram)
+        --include, -i only use provided social networks [comma-delimited, lowercase] (eg: blogger,ebay)
 
     Examples
         $ node index.js --username natgeo
@@ -39,6 +40,10 @@ const cli = meow(`
             exclude: {
                 type: 'string',
                 alias: 'e'
+            },
+            include: {
+                type: 'string',
+                alias: 'i'
             }
         }
     });
@@ -72,6 +77,7 @@ if (usernames.length < 1) {
 }
 
 let ignored = [];
+let included = [];
 if (typeof cli['flags']['e'] !== 'undefined') {
     if (!cli['flags']['e'].includes(',')) {
         ignored = [cli['flags']['e'].trim().toLowerCase()];
@@ -82,11 +88,21 @@ if (typeof cli['flags']['e'] !== 'undefined') {
     }
 
     console.log(`[${chalk.green('@')}] ${chalk.green(`Exclude`)}: ${chalk.red(ignored)}`);
+} else if (typeof cli['flags']['i'] !== 'undefined') {
+    if (!cli['flags']['i'].includes(',')) {
+        included = [cli['flags']['i'].trim().toLowerCase()];
+    } else {
+        included = cli['flags']['i'].split(',').map(i => {
+            return i.toLowerCase().trim();
+        });
+    }
+
+    console.log(`[${chalk.green('@')}] ${chalk.green(`Include`)}: ${chalk.red(included)}`);
 }
 
 fs.readdirSync('./lib/plugins/').forEach(file => {
     let name = file.replace(/\.js/g, '');
-    if (!ignored.includes(name.toLowerCase())) {
+    if ((ignored.length > 0 && !ignored.includes(name.toLowerCase())) || (included.length > 0 && included.includes(name.toLowerCase()))) {
         networks[name] = require(`./lib/plugins/${file}`);
     }
 });
