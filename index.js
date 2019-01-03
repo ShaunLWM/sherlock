@@ -3,9 +3,13 @@ const async = require('async');
 const chalk = require('chalk');
 const meow = require('meow');
 
-const networks = JSON.parse(fs.readFileSync('./lib/data.json'));
-const sherlock = require('./lib/');
+const networks = {};
+fs.readdirSync('./lib/plugins/').forEach(file => {
+    let name = file.replace(/\.js/g, '');
+    networks[name] = require(`./lib/plugins/${file}`);
+});
 
+const sherlock = require('./lib/');
 const cli = meow(`
     Usage
         $ node index.js [--file] [--username] [--parallel]
