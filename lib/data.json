@@ -532,5 +532,10 @@
         "url": "https://issuu.com/{}",
         "urlMain": "https://issuu.com/",
         "errorType": "status_code"
+    },
+    "9GAG": {
+        "url": "https://9gag.com/u/{}",
+        "urlMain": "https://9gag.com/",
+        "errorType": "status_code"
     }
 }
