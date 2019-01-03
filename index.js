@@ -2,22 +2,19 @@ const fs = require('fs');
 const async = require('async');
 const chalk = require('chalk');
 const meow = require('meow');
+const sherlock = require('./lib/');
 
 const networks = {};
-fs.readdirSync('./lib/plugins/').forEach(file => {
-    let name = file.replace(/\.js/g, '');
-    networks[name] = require(`./lib/plugins/${file}`);
-});
 
-const sherlock = require('./lib/');
 const cli = meow(`
     Usage
-        $ node index.js [--file] [--username] [--parallel]
+        $ node index.js [--file] [--username] [--parallel] [--ignore]
 
     Options
         --file, -f  parse username from file (each name on a newline)
         --username, -u sherlock a single username
         --parallel, -p number of concurrent sites to check (default: 5)
+        --ignore, -i add social networks to ignore [comma-delimited, lowercase] (eg: 9gag,instagram)
 
     Examples
         $ node index.js --username natgeo
@@ -38,6 +35,10 @@ const cli = meow(`
             parallel: {
                 type: 'integer',
                 alias: 'p'
+            },
+            ignore: {
+                type: 'string',
+                alias: 'i'
             }
         }
     });
@@ -69,6 +70,26 @@ if (typeof cli['flags']['p'] !== 'undefined') {
 if (usernames.length < 1) {
     return console.log(cli['help']);
 }
+
+let ignored = [];
+if (typeof cli['flags']['i'] !== 'undefined') {
+    if (!cli['flags']['i'].includes(',')) {
+        ignored = [cli['flags']['i'].trim().toLowerCase()];
+    } else {
+        ignored = cli['flags']['i'].split(',').map(i => {
+            return i.toLowerCase().trim();
+        });
+    }
+
+    console.log(`[${chalk.green('@')}] ${chalk.green(`Ignoring`)}: ${chalk.red(ignored)}`);
+}
+
+fs.readdirSync('./lib/plugins/').forEach(file => {
+    let name = file.replace(/\.js/g, '');
+    if (!ignored.includes(name.toLowerCase())) {
+        networks[name] = require(`./lib/plugins/${file}`);
+    }
+});
 
 console.log(`[${chalk.green('@')}] ${chalk.green(`${usernames.length} username(s) to check.`)}: ${chalk.red(usernames)}`);
 async.eachSeries(usernames, function (username, callback) {
