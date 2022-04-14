@@ -6,7 +6,7 @@
   "author": "ShaunLWM",
   "license": "MIT",
   "dependencies": {
-    "async": "^2.6.1",
+    "async": "^3.2.2",
     "chalk": "^2.4.1",
     "meow": "^5.0.0",
     "request": "^2.88.0"
